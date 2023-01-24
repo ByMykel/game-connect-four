@@ -97,18 +97,18 @@ const cellColor = (row: number) => {
 </script>
 
 <template>
-  <div class="h-screen bg-indigo-500 flex items-center justify-center">
+  <div class="h-screen bg-indigo-500 flex items-end justify-center">
     <div class="flex flex-row items-center justify-center gap-[18px]">
-      <div class="absolute top-[205px] pointer-events-none z-10">
+      <div class="absolute bottom-10 pointer-events-none z-10">
         <img src="https://raw.githubusercontent.com/MLongobardi/FEM-connect-four-game/0ff779419634695aabcddf4339e79963dcd21615/static/images/board-layer-black-large.svg" alt="">
       </div>
-      <div class="absolute top-[205px] pointer-events-none z-10">
+      <div class="absolute bottom-12 pointer-events-none z-10">
         <img src="https://raw.githubusercontent.com/MLongobardi/FEM-connect-four-game/0ff779419634695aabcddf4339e79963dcd21615/static/images/board-layer-white-large.svg" alt="">
       </div>
       <div
         v-for="(col, indexCol) in board"
         :key="`col-${indexCol}`"
-        class="flex flex-col-reverse items-center justify-center gap-[18px] group"
+        class="flex flex-col-reverse items-center justify-center gap-[18px] group mb-[84px] sm:mb-24"
         @click="addCoin(indexCol)"
       >
         <div

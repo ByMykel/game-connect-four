@@ -1,160 +1,97 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { useGame } from "./composables/game";
 
-const board = ref([
-  [0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0],
-]);
+const { currentPlayer, board, winner, addCoin } = useGame();
 
-const currentPlayer = ref(1);
-
-const checkGame = (): Boolean => {
-  // check columns
-  for (let i = 0; i < board.value.length; i++) {
-    let count = 0;
-
-    for (let j of board.value[i]) {
-      count += j;
-    }
-
-    if (count === 4 || count === -4) {
-      return true;
-    }
-  }
-
-  // check rows
-  for (let i = 0; i < board.value[0].length; i++) {
-    let count = 0;
-
-    for (let j = 0; j < board.value.length; j++) {
-      count += board.value[j][i];
-    }
-
-    if (count === 4 || count === -4) {
-      return true;
-    }
-  }
-
-  // check diagonals
-  for (let i = 0; i < board.value.length; i++) {
-    let count = 0;
-
-    for (let j = 0; j < board.value[0].length; j++) {
-      if (i + j < board.value.length) {
-        count += board.value[i + j][j];
-      }
-    }
-
-    if (count === 4 || count === -4) {
-      return true;
-    }
-  }
-
-  for (let i = 0; i < board.value.length; i++) {
-    let count = 0;
-
-    for (let j = 0; j < board.value[0].length; j++) {
-      if (i - j >= 0) {
-        count += board.value[i - j][j];
-      }
-    }
-
-    if (count === 4 || count === -4) {
-      return true;
-    }
-  }
-
-  return false;
-};
-
-const addCoin = (indexCol: number) => {
-  const col = board.value[indexCol];
-  const indexRow = col.findIndex((row) => row === 0);
-  if (indexRow === -1) return;
-  col[indexRow] = currentPlayer.value;
-
-  if (checkGame()) {
-    setTimeout(() => {
-      alert(`Player ${currentPlayer.value === 1 ? "red" : "yellow"} wins!`);
-      board.value = board.value.map((col) => col.map(() => 0));
-    }, 100);
-
-    return;
-  }
-
-  currentPlayer.value = currentPlayer.value === 1 ? -1 : 1;
-};
-
-const cellColor = (row: number) => {
-  if (row === 1) return "bg-red-500";
-  if (row === -1) return "bg-yellow-500";
+const cellColor = (row: number): string => {
+  if (row === 1 || row === 2) return "bg-red-500";
+  if (row === -1 || row === -2) return "bg-yellow-500";
+  return "";
 };
 
 const rowColor = (col: number) => {
   const firstEmpty = board.value[col].findIndex((row) => row === 0) + 1;
   const player = currentPlayer.value === 1 ? "red" : "yellow";
 
-  return `coin-row-${firstEmpty}-${player}`;
+  return `coin-row-${player}-${firstEmpty}`;
 };
 </script>
 
 <template>
-  <div class="h-screen bg-indigo-500 flex items-end justify-center">
-    <div class="flex flex-row items-center justify-center gap-[18px]">
-      <div class="absolute bottom-10 pointer-events-none z-10">
+  <div class="flex items-end justify-center">
+    <div class="relative max-w-2xl w-full h-full aspect-square">
+      <div>
         <img
+          class="absolute bottom-2 pointer-events-none w-full -z-0"
           src="https://raw.githubusercontent.com/MLongobardi/FEM-connect-four-game/0ff779419634695aabcddf4339e79963dcd21615/static/images/board-layer-black-large.svg"
-          alt=""
         />
-      </div>
-      <div class="absolute bottom-12 pointer-events-none z-20">
         <img
+          class="absolute bottom-[14px] pointer-events-none z-20 w-full"
           src="https://raw.githubusercontent.com/MLongobardi/FEM-connect-four-game/0ff779419634695aabcddf4339e79963dcd21615/static/images/board-layer-white-large.svg"
-          alt=""
         />
       </div>
 
       <div
-        v-for="(col, indexCol) in board"
-        :key="`col-${indexCol}`"
         class="
-          flex flex-col-reverse
-          items-center
-          justify-center
-          gap-[18px]
-          group
-          mb-[84px]
-          sm:mb-[105px]
-          relative
+          grid grid-cols-7
+          p-2
+          sm:p-4
+          gap-[8px]
+          sm:gap-[10px]
+          w-full
+          h-full
           z-10
+          pt-[28px]
+          pb-[51px]
+          sm:pb-[65px] sm:pt-[53px]
         "
-        @click="addCoin(indexCol)"
       >
         <div
-          v-for="(row, indexRow) in col"
-          :key="`row-${indexRow * indexCol}`"
-          class="w-10 h-10 sm:w-[70px] sm:h-[70px]"
-          :class="rowColor(indexCol)"
+          v-for="(col, indexCol) in board"
+          :key="`col-${indexCol}`"
+          class="flex flex-col-reverse gap-[12px] group relative z-10"
+          @click="addCoin(indexCol)"
         >
-          <Transition name="bounce">
-            <div
-              v-if="row !== 0"
-              class="
-                flex
-                items-center
-                justify-center
-                w-full
-                h-full
-                rounded-full
-              "
-              :class="cellColor(row)"
-            ></div>
-          </Transition>
+          <div
+            v-for="(row, indexRow) in col"
+            :key="`row-${indexRow * indexCol}`"
+            class="w-full h-full"
+            :class="rowColor(indexCol)"
+          >
+            <Transition name="bounce">
+              <div
+                v-if="row !== 0"
+                class="
+                  flex
+                  items-center
+                  justify-center
+                  w-full
+                  h-full
+                  rounded-full
+                "
+                :class="cellColor(row)"
+              >
+                <svg
+                  v-if="row === 2 || row === -2"
+                  width="24px"
+                  height="24px"
+                  stroke-width="1.5"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  color="#000000"
+                >
+                  <path
+                    d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"
+                    stroke="#fff"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  ></path>
+                </svg>
+              </div>
+            </Transition>
+          </div>
         </div>
       </div>
     </div>

@@ -80,7 +80,7 @@ const addCoin = (indexCol: number) => {
 
   if (checkGame()) {
     setTimeout(() => {
-      alert(`Player ${currentPlayer.value === 1 ? 'red' : 'yellow'} wins!`);
+      alert(`Player ${currentPlayer.value === 1 ? "red" : "yellow"} wins!`);
       board.value = board.value.map((col) => col.map(() => 0));
     }, 100);
 
@@ -94,32 +94,64 @@ const cellColor = (row: number) => {
   if (row === 1) return "bg-red-500";
   if (row === -1) return "bg-yellow-500";
 };
+
+const rowColor = (col: number) => {
+  const firstEmpty = board.value[col].findIndex((row) => row === 0) + 1;
+  const player = currentPlayer.value === 1 ? "red" : "yellow";
+
+  return `coin-row-${firstEmpty}-${player}`;
+};
 </script>
 
 <template>
   <div class="h-screen bg-indigo-500 flex items-end justify-center">
     <div class="flex flex-row items-center justify-center gap-[18px]">
       <div class="absolute bottom-10 pointer-events-none z-10">
-        <img src="https://raw.githubusercontent.com/MLongobardi/FEM-connect-four-game/0ff779419634695aabcddf4339e79963dcd21615/static/images/board-layer-black-large.svg" alt="">
+        <img
+          src="https://raw.githubusercontent.com/MLongobardi/FEM-connect-four-game/0ff779419634695aabcddf4339e79963dcd21615/static/images/board-layer-black-large.svg"
+          alt=""
+        />
       </div>
-      <div class="absolute bottom-12 pointer-events-none z-10">
-        <img src="https://raw.githubusercontent.com/MLongobardi/FEM-connect-four-game/0ff779419634695aabcddf4339e79963dcd21615/static/images/board-layer-white-large.svg" alt="">
+      <div class="absolute bottom-12 pointer-events-none z-20">
+        <img
+          src="https://raw.githubusercontent.com/MLongobardi/FEM-connect-four-game/0ff779419634695aabcddf4339e79963dcd21615/static/images/board-layer-white-large.svg"
+          alt=""
+        />
       </div>
+
       <div
         v-for="(col, indexCol) in board"
         :key="`col-${indexCol}`"
-        class="flex flex-col-reverse items-center justify-center gap-[18px] group mb-[84px] sm:mb-24"
+        class="
+          flex flex-col-reverse
+          items-center
+          justify-center
+          gap-[18px]
+          group
+          mb-[84px]
+          sm:mb-[105px]
+          relative
+          z-10
+        "
         @click="addCoin(indexCol)"
       >
         <div
           v-for="(row, indexRow) in col"
           :key="`row-${indexRow * indexCol}`"
-          class="w-10 h-10 sm:w-[70px] sm:h-[70px] group-hover:bg-indigo-700"
+          class="w-10 h-10 sm:w-[70px] sm:h-[70px]"
+          :class="rowColor(indexCol)"
         >
           <Transition name="bounce">
             <div
               v-if="row !== 0"
-              class="flex items-center justify-center w-full h-full rounded-full"
+              class="
+                flex
+                items-center
+                justify-center
+                w-full
+                h-full
+                rounded-full
+              "
               :class="cellColor(row)"
             ></div>
           </Transition>

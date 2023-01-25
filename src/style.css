@@ -4,6 +4,54 @@
 
 @layer base {
   body {
-    @apply font-sans antialiased;
+    @apply font-sans antialiased text-gray-900;
   }
+}
+
+.coin-row-1-red {
+  @apply group-hover:[&:nth-child(1)]:bg-red-500;
+}
+
+.coin-row-2-red {
+  @apply group-hover:[&:nth-child(2)]:bg-red-500;
+}
+
+.coin-row-3-red {
+  @apply group-hover:[&:nth-child(3)]:bg-red-500;
+}
+
+.coin-row-4-red {
+  @apply group-hover:[&:nth-child(4)]:bg-red-500;
+}
+
+.coin-row-5-red {
+  @apply group-hover:[&:nth-child(5)]:bg-red-500;
+}
+
+.coin-row-6-red {
+  @apply group-hover:[&:nth-child(6)]:bg-red-500;
+}
+
+.coin-row-1-yellow {
+  @apply group-hover:[&:nth-child(1)]:bg-yellow-500;
+}
+
+.coin-row-2-yellow {
+  @apply group-hover:[&:nth-child(2)]:bg-yellow-500;
+}
+
+.coin-row-3-yellow {
+  @apply group-hover:[&:nth-child(3)]:bg-yellow-500;
+}
+
+.coin-row-4-yellow {
+  @apply group-hover:[&:nth-child(4)]:bg-yellow-500;
+}
+
+.coin-row-5-yellow {
+  @apply group-hover:[&:nth-child(5)]:bg-yellow-500;
+}
+
+.coin-row-6-yellow {
+  @apply group-hover:[&:nth-child(6)]:bg-yellow-500;
 }

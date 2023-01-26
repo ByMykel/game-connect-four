@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import Column from "./components/Column.vue";
+import Coin from "./components/Coin.vue";
 import { useGame } from "./composables/game";
 
 const { currentPlayer, board, winner, addCoin } = useGame();
@@ -18,82 +20,37 @@ const rowColor = (col: number) => {
 </script>
 
 <template>
-  <div class="flex items-end justify-center">
-    <div class="relative max-w-2xl w-full h-full aspect-square">
-      <div>
-        <img
-          class="absolute bottom-2 pointer-events-none w-full -z-0"
-          src="https://raw.githubusercontent.com/MLongobardi/FEM-connect-four-game/0ff779419634695aabcddf4339e79963dcd21615/static/images/board-layer-black-large.svg"
-        />
-        <img
-          class="absolute bottom-[14px] pointer-events-none z-20 w-full"
-          src="https://raw.githubusercontent.com/MLongobardi/FEM-connect-four-game/0ff779419634695aabcddf4339e79963dcd21615/static/images/board-layer-white-large.svg"
-        />
-      </div>
-
+  <div class="flex flex-col items-center">
+    <header
+      class="h-20 bg-indigo-300 m-2 rounded-md p-4 w-56 flex items-center justify-center"
+    >
+      placeholder
+    </header>
+    <div class="w-[335px] h-[310px] sm:w-[632px] sm:h-[584px] relative">
+      <img
+        class="absolute top-0 pointer-events-none"
+        src="https://raw.githubusercontent.com/MLongobardi/FEM-connect-four-game/0ff779419634695aabcddf4339e79963dcd21615/static/images/board-layer-black-large.svg"
+      />
       <div
-        class="
-          grid grid-cols-7
-          p-2
-          sm:p-4
-          gap-[8px]
-          sm:gap-[10px]
-          w-full
-          h-full
-          z-10
-          pt-[28px]
-          pb-[51px]
-          sm:pb-[65px] sm:pt-[53px]
-        "
+        class="absolute p-[10px] pb-7 sm:p-4 sm:pb-14 grid grid-cols-7 gap-[11px] sm:gap-[16px] w-full h-full"
       >
-        <div
+        <Column
           v-for="(col, indexCol) in board"
           :key="`col-${indexCol}`"
-          class="flex flex-col-reverse gap-[12px] group relative z-10"
           @click="addCoin(indexCol)"
         >
-          <div
+          <Coin
             v-for="(row, indexRow) in col"
             :key="`row-${indexRow * indexCol}`"
-            class="w-full h-full"
+            :row="row"
             :class="rowColor(indexCol)"
-          >
-            <Transition name="bounce">
-              <div
-                v-if="row !== 0"
-                class="
-                  flex
-                  items-center
-                  justify-center
-                  w-full
-                  h-full
-                  rounded-full
-                "
-                :class="cellColor(row)"
-              >
-                <svg
-                  v-if="row === 2 || row === -2"
-                  width="24px"
-                  height="24px"
-                  stroke-width="1.5"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  color="#000000"
-                >
-                  <path
-                    d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"
-                    stroke="#fff"
-                    stroke-width="1.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  ></path>
-                </svg>
-              </div>
-            </Transition>
-          </div>
-        </div>
+          ></Coin>
+        </Column>
       </div>
+      <img
+        class="absolute top-0 pointer-events-none z-10"
+        src="https://raw.githubusercontent.com/MLongobardi/FEM-connect-four-game/0ff779419634695aabcddf4339e79963dcd21615/static/images/board-layer-white-large.svg"
+      />
     </div>
   </div>
 </template>
@@ -112,6 +69,12 @@ const rowColor = (col: number) => {
   50% {
     transform: translateY(0);
   }
+  60% {
+    transform: translateY(-50px);
+  }
+  /* 95% {
+    transform: translateY(-10px);
+  } */
   100% {
     transform: translateY(0);
   }

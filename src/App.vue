@@ -8,23 +8,21 @@ import { useGame } from "./composables/useGame";
 const { currentPlayer, board, winner, addCoin } = useGame();
 
 const rowColorClasses = (col: number) => {
-  const classes = {
-    red: {
-      "1": "group-hover:[&:nth-child(1)]:bg-red-500 rounded-full",
-      "2": "group-hover:[&:nth-child(2)]:bg-red-500 rounded-full",
-      "3": "group-hover:[&:nth-child(3)]:bg-red-500 rounded-full",
-      "4": "group-hover:[&:nth-child(4)]:bg-red-500 rounded-full",
-      "5": "group-hover:[&:nth-child(5)]:bg-red-500 rounded-full",
-      "6": "group-hover:[&:nth-child(6)]:bg-red-500 rounded-full",
-    },
-    yellow: {
-      "1": "group-hover:[&:nth-child(1)]:bg-yellow-500 rounded-full",
-      "2": "group-hover:[&:nth-child(2)]:bg-yellow-500 rounded-full",
-      "3": "group-hover:[&:nth-child(3)]:bg-yellow-500 rounded-full",
-      "4": "group-hover:[&:nth-child(4)]:bg-yellow-500 rounded-full",
-      "5": "group-hover:[&:nth-child(5)]:bg-yellow-500 rounded-full",
-      "6": "group-hover:[&:nth-child(6)]:bg-yellow-500 rounded-full",
-    },
+  const classes: { [key: string]: string } = {
+    // red
+    "red-1": "group-hover:[&:nth-child(1)]:bg-red-500 rounded-full",
+    "red-2": "group-hover:[&:nth-child(2)]:bg-red-500 rounded-full",
+    "red-3": "group-hover:[&:nth-child(3)]:bg-red-500 rounded-full",
+    "red-4": "group-hover:[&:nth-child(4)]:bg-red-500 rounded-full",
+    "red-5": "group-hover:[&:nth-child(5)]:bg-red-500 rounded-full",
+    "red-6": "group-hover:[&:nth-child(6)]:bg-red-500 rounded-full",
+    // yellow
+    "yellow-1": "group-hover:[&:nth-child(1)]:bg-yellow-500 rounded-full",
+    "yellow-2": "group-hover:[&:nth-child(2)]:bg-yellow-500 rounded-full",
+    "yellow-3": "group-hover:[&:nth-child(3)]:bg-yellow-500 rounded-full",
+    "yellow-4": "group-hover:[&:nth-child(4)]:bg-yellow-500 rounded-full",
+    "yellow-5": "group-hover:[&:nth-child(5)]:bg-yellow-500 rounded-full",
+    "yellow-6": "group-hover:[&:nth-child(6)]:bg-yellow-500 rounded-full",
   };
 
   const firstEmpty = board.value[col].findIndex((row) => row === 0) + 1;

@@ -12,7 +12,6 @@ const cellColor = (row: number): string => {
 };
 </script>
 
-
 <template>
   <div class="w-full h-full">
     <Transition name="bounce">
@@ -43,3 +42,26 @@ const cellColor = (row: number): string => {
     </Transition>
   </div>
 </template>
+
+<style>
+.bounce-enter-active {
+  animation: bounce-in 0.8s;
+}
+.bounce-leave-active {
+  animation: bounce-in 2s reverse;
+}
+@keyframes bounce-in {
+  0% {
+    transform: translateY(-1000px);
+  }
+  50% {
+    transform: translateY(0);
+  }
+  60% {
+    transform: translateY(-50px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+</style>

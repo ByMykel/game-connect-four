@@ -28,7 +28,7 @@ const rowColorClasses = (col: number) => {
   const firstEmpty = board.value[col].findIndex((row) => row === 0) + 1;
   const player = currentPlayer.value === 1 ? "red" : "yellow";
 
-  return classes[player][firstEmpty];
+  return classes[`${player}-${firstEmpty}`];
 };
 </script>
 

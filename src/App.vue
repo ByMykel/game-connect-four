@@ -2,12 +2,25 @@
 import Board from "./components/Board.vue";
 import Column from "./components/Column.vue";
 import Coin from "./components/Coin.vue";
+import Logo from "./components/svg/Logo.vue";
+import TurnBackgroundRed from "./components/svg/TurnBackgroundRed.vue";
+import TurnBackgroundYellow from "./components/svg/TurnBackgroundYellow.vue";
 
 import { useGame } from "./composables/useGame";
 
-const { currentPlayer, board, winner, addCoin } = useGame();
+const {
+  currentPlayer,
+  board,
+  winner,
+  addCoin,
+  timerCount,
+  gameIsOver,
+  restrart,
+} = useGame();
 
 const rowColorClasses = (col: number) => {
+  if (gameIsOver.value) return "";
+
   const classes: { [key: string]: string } = {
     // red
     "red-1": "group-hover:[&:nth-child(1)]:bg-red-500 rounded-full",
@@ -33,25 +46,69 @@ const rowColorClasses = (col: number) => {
 </script>
 
 <template>
-  <div class="flex flex-col items-center">
+  <div class="flex flex-col items-center relative">
     <header
-      class="h-20 bg-indigo-300 m-2 rounded-md p-4 w-56 flex items-center justify-center"
+      class="m-2 p-4 w-[335px] sm:w-[632px] flex justify-between"
     >
-      placeholder
+      <Logo class="h-10 w-10" />
+
+      <div class="flex items-center">
+        <button
+          class="rounded-full bg-gray-600/70 hover:bg-gray-500/70 py-1 px-4 text-white text-sm"
+          type="button"
+          @click="restrart()"
+        >
+          PLAY AGAIN
+        </button>
+      </div>
     </header>
-    <Board>
-      <Column
-        v-for="(col, indexCol) in board"
-        :key="`col-${indexCol}`"
-        @click="addCoin(indexCol)"
+    <div
+      class="w-[335px] h-[310px] lg:w-full sm:w-[632px] sm:h-[584px] flex flex-wrap lg:flex-nowrap justify-center"
+    >
+      <!-- <div class="bg-red-500 w-2/4 lg:w-auto">player 1</div> -->
+      <Board class="order-last lg:order-none">
+        <Column
+          v-for="(col, indexCol) in board"
+          :key="`col-${indexCol}`"
+          @click="addCoin(indexCol)"
+        >
+          <Coin
+            v-for="(row, indexRow) in col"
+            :key="`row-${indexRow * indexCol}`"
+            :row="row"
+            :class="rowColorClasses(indexCol)"
+          ></Coin>
+        </Column>
+      </Board>
+      <!-- <div class="bg-yellow-500 w-2/4 lg:w-auto">player 2</div> -->
+    </div>
+    <div
+      class="h-20 w-[335px] sm:w-[632px] z-20 absolute bottom-[-4rem] sm:-bottom-14 flex justify-center"
+    >
+      <div v-if="!gameIsOver" class="relative flex justify-center">
+        <span class="absolute top-14 text-6xl text-white font-bold"
+          >{{ timerCount }}s</span
+        >
+        <TurnBackgroundRed v-if="currentPlayer === 1" />
+        <TurnBackgroundYellow v-else />
+      </div>
+      <div
+        v-else
+        class="bg-white rounded-md shadow border-black border-2 p-4 px-5 sm:px-10 h-[8rem] sm:h-[9rem] text-center"
       >
-        <Coin
-          v-for="(row, indexRow) in col"
-          :key="`row-${indexRow * indexCol}`"
-          :row="row"
-          :class="rowColorClasses(indexCol)"
-        ></Coin>
-      </Column>
-    </Board>
+        <div class="uppercase">
+          {{ winner?.player > 0 ? "red" : "yellow" }} player
+        </div>
+        <div class="uppercase text-3xl sm:text-5xl">wins</div>
+
+        <button
+          class="rounded-full bg-indigo-600 hover:bg-indigo-500 py-1 px-4 text-white"
+          type="button"
+          @click="restrart()"
+        >
+          PLAY AGAIN
+        </button>
+      </div>
+    </div>
   </div>
 </template>

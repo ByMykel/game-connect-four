@@ -47,9 +47,11 @@ const cellColor = (row: number): string => {
 .bounce-enter-active {
   animation: bounce-in 0.8s;
 }
+
 .bounce-leave-active {
-  animation: bounce-in 2s reverse;
+  animation: bounce-out 0.5s reverse;
 }
+
 @keyframes bounce-in {
   0% {
     transform: translateY(-1000px);
@@ -59,6 +61,21 @@ const cellColor = (row: number): string => {
   }
   60% {
     transform: translateY(-50px);
+  }
+  62% {
+    transform: translateY(0);
+  }
+  65% {
+    transform: translateY(-20px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes bounce-out {
+  0% {
+    transform: translateY(-1000px);
   }
   100% {
     transform: translateY(0);

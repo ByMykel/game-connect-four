@@ -1,6 +1,9 @@
-import { computed, ref } from "vue";
+import { computed, ref, onMounted } from "vue";
+
+const TIME_TO_PLAY = 30;
 
 export function useGame() {
+  // 1 = red, -1 = yellow
   const currentPlayer = ref(1);
   const board = ref([
     [0, 0, 0, 0, 0, 0],
@@ -11,9 +14,6 @@ export function useGame() {
     [0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0],
   ]);
-
-  // 1 = red, -1 = yellow
-  const player = ref(1);
 
   const winner = computed(() => {
     // check horizontal
@@ -98,35 +98,78 @@ export function useGame() {
     return false;
   });
 
+  const gameIsOver = ref(false);
+
   const addCoin = (indexCol: number): void => {
+    if (gameIsOver.value) return;
     const col = board.value[indexCol];
     const indexRow = col.findIndex((row) => row === 0);
     if (indexRow === -1) return;
     col[indexRow] = currentPlayer.value;
-  
+
     if (winner.value !== false) {
       const newValue = winner.value.player * 2;
-  
+
       winner.value.winner.forEach((row) => {
         board.value[row[1]][row[0]] = newValue;
       });
-  
-      alert(`Player ${currentPlayer.value === 1 ? "red" : "yellow"} wins!`);
-  
-      setTimeout(() => {
-        board.value = board.value.map((col) => col.map(() => 0));
-      }, 200)
-  
+
+      // alert(`Player ${currentPlayer.value === 1 ? "red" : "yellow"} wins!`);
+      gameIsOver.value = true;
+      stopTimer();
+
+      // clearInterval(timer.value);
+
+      // setTimeout(() => {
+      //   board.value = board.value.map((col) => col.map(() => 0));
+      //   timer.value 
+      // }, 200)
+
       return;
     }
-  
+
     currentPlayer.value = currentPlayer.value === 1 ? -1 : 1;
+    timerCount.value = TIME_TO_PLAY;
   };
+
+  const timerCount = ref(TIME_TO_PLAY);
+  const timer = ref(null as any);
+
+  const startTimer = () => {
+    timer.value = setInterval(() => {
+      timerCount.value--;
+
+      if (timerCount.value === 0) {
+        currentPlayer.value = currentPlayer.value === 1 ? -1 : 1;
+        timerCount.value = TIME_TO_PLAY;
+        // clearInterval(timer.value);
+      }
+    }, 1000);
+  };
+
+  const stopTimer = () => {
+    clearInterval(timer.value);
+  };
+
+  const restrart = () => {
+    board.value = board.value.map((col) => col.map(() => 0));
+    gameIsOver.value = false;
+    timerCount.value = TIME_TO_PLAY;
+    stopTimer();
+    startTimer();
+  };
+
+  onMounted(() => {
+    startTimer();
+  });
 
   return {
     currentPlayer,
     board,
     winner,
     addCoin,
+    restrart,
+    timerCount,
+    gameIsOver,
   }
 }

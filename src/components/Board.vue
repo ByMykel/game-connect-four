@@ -22,5 +22,6 @@ const boardSvgClasses = "absolute top-0 pointer-events-none";
     </div>
     <BoardFrontLarge v-if="width > 640" class="z-10" :class="boardSvgClasses" />
     <BoardFrontSmall v-else class="z-10" :class="boardSvgClasses" />
+    <div class="bg-blue-400 w-full h-full rounded-[3rem]"></div>
   </div>
 </template>

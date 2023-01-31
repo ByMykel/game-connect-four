@@ -1,21 +1,20 @@
 <script setup lang="ts">
 import Board from "./components/Board.vue";
+import BoardFooter from "./components/BoardFooter.vue";
 import Column from "./components/Column.vue";
 import Coin from "./components/Coin.vue";
 import Logo from "./components/svg/Logo.vue";
-import TurnBackgroundRed from "./components/svg/TurnBackgroundRed.vue";
-import TurnBackgroundYellow from "./components/svg/TurnBackgroundYellow.vue";
 
 import { useGame } from "./composables/useGame";
 
 const {
   currentPlayer,
   board,
-  winner,
+  winnerName,
   addCoin,
   timerCount,
   gameIsOver,
-  restrart,
+  restart,
 } = useGame();
 
 const rowColorClasses = (col: number) => {
@@ -47,16 +46,14 @@ const rowColorClasses = (col: number) => {
 
 <template>
   <div class="flex flex-col items-center relative">
-    <header
-      class="m-2 p-4 w-[335px] sm:w-[632px] flex justify-between"
-    >
+    <header class="m-2 p-4 w-[335px] sm:w-[632px] flex justify-between">
       <Logo class="h-10 w-10" />
 
       <div class="flex items-center">
         <button
-          class="rounded-full bg-gray-600/70 hover:bg-gray-500/70 py-1 px-4 text-white text-sm"
+          class="rounded-full bg-blue-700/70 hover:bg-blue-500/70 py-1 px-4 text-white text-sm"
           type="button"
-          @click="restrart()"
+          @click="restart()"
         >
           PLAY AGAIN
         </button>
@@ -82,33 +79,12 @@ const rowColorClasses = (col: number) => {
       </Board>
       <!-- <div class="bg-yellow-500 w-2/4 lg:w-auto">player 2</div> -->
     </div>
-    <div
-      class="h-20 w-[335px] sm:w-[632px] z-20 absolute bottom-[-4rem] sm:-bottom-14 flex justify-center"
-    >
-      <div v-if="!gameIsOver" class="relative flex justify-center">
-        <span class="absolute top-14 text-6xl text-white font-bold"
-          >{{ timerCount }}s</span
-        >
-        <TurnBackgroundRed v-if="currentPlayer === 1" />
-        <TurnBackgroundYellow v-else />
-      </div>
-      <div
-        v-else
-        class="bg-white rounded-md shadow border-black border-2 p-4 px-5 sm:px-10 h-[8rem] sm:h-[9rem] text-center"
-      >
-        <div class="uppercase">
-          {{ winner?.player > 0 ? "red" : "yellow" }} player
-        </div>
-        <div class="uppercase text-3xl sm:text-5xl">wins</div>
-
-        <button
-          class="rounded-full bg-indigo-600 hover:bg-indigo-500 py-1 px-4 text-white"
-          type="button"
-          @click="restrart()"
-        >
-          PLAY AGAIN
-        </button>
-      </div>
-    </div>
+    <BoardFooter
+      :player="currentPlayer"
+      :timerCount="timerCount"
+      :gameIsOver="gameIsOver"
+      :winnerName="winnerName"
+      :restart="restart"
+    />
   </div>
 </template>

@@ -6,8 +6,8 @@ const props = defineProps<{
 }>();
 
 const cellColor = (row: number): string => {
-  if (row === 1 || row === 2) return "bg-red-500";
-  if (row === -1 || row === -2) return "bg-yellow-500";
+  if (row === 1 || row === 2) return "bg-gradient-to-r from-red-400 to-red-600";
+  if (row === -1 || row === -2) return "bg-gradient-to-r from-yellow-400 to-yellow-600";
   return "";
 };
 </script>
@@ -22,6 +22,7 @@ const cellColor = (row: number): string => {
       >
         <svg
           v-if="row === 2 || row === -2"
+          class="pb-[4px] pr-[2px] sm:p-0"
           width="24px"
           height="24px"
           stroke-width="1.5"

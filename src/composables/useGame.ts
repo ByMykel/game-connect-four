@@ -1,11 +1,23 @@
-import { computed, ref, onMounted } from "vue";
+import { computed, ref, onMounted, onUnmounted } from "vue";
 
 const TIME_TO_PLAY = 30;
+const RED_PLAYER = 1;
+const YELLOW_PLAYER = -1;
+
+type Winner = {
+  coins: number[][];
+  winner: number;
+  type: string;
+};
+
+const areAllEqual = (...items: number[]) => items[0] !== 0 && items.every(item => item === items[0]);
 
 export function useGame() {
-  // 1 = red, -1 = yellow
-  const currentPlayer = ref(1);
-  const board = ref([
+  const currentPlayer = ref<number>(RED_PLAYER);
+  const gameIsOver = ref<boolean>(false);
+  const timerCount = ref<number>(TIME_TO_PLAY);
+  const timer = ref(null as any);
+  const board = ref<number[][]>([
     [0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0],
@@ -15,146 +27,151 @@ export function useGame() {
     [0, 0, 0, 0, 0, 0],
   ]);
 
-  const winner = computed(() => {
-    // check horizontal
-    for (let i = 0; i < board.value.length - 4; i++) {
-      for (let j = 0; j < board.value[i].length; j++) {
-        if (board.value[i][j] === board.value[i + 1][j] && board.value[i][j] === board.value[i + 2][j] && board.value[i][j] === board.value[i + 3][j] && board.value[i][j] !== 0) {
-          return {
-            winner: [[i, j], [i + 1, j], [i + 2, j], [i + 3, j]],
-            player: board.value[i][j],
-            type: 1
-          };
-        }
-      }
+  const winnerName = computed(() => {
+    const winner = checkWinner(board.value);
+
+    if (winner != null) {
+      if (winner.winner > 0) return "Red player";
+      if (winner.winner < 0) return "Yellow player";
     }
 
-    // check vertical
-    for (let i = 0; i < board.value.length; i++) {
-      for (let j = 0; j < board.value[i].length - 4; j++) {
-        if (board.value[i][j] === board.value[i][j + 1] && board.value[i][j] === board.value[i][j + 2] && board.value[i][j] === board.value[i][j + 3] && board.value[i][j] !== 0) {
-          return {
-            winner: [[j, i], [j + 1, i], [j + 2, i], [j + 3, i]],
-            player: board.value[i][j],
-            type: 2
-          };
-        }
-      }
-    }
-
-    // check diagonal
-    for (let i = 0; i < board.value.length - 4; i++) {
-      for (let j = 0; j < board.value[i].length - 4; j++) {
-        if (board.value[i][j] === board.value[i + 1][j + 1] && board.value[i][j] === board.value[i + 2][j + 2] && board.value[i][j] === board.value[i + 3][j + 3] && board.value[i][j] !== 0) {
-          return {
-            winner: [[i, j], [i + 1, j + 1], [i + 2, j + 2], [i + 3, j + 3]],
-            player: board.value[i][j],
-            type: 3
-          };
-        }
-      }
-    }
-
-    // check diagonal
-    for (let i = 0; i < board.value.length - 4; i++) {
-      for (let j = 3; j < board.value[i].length; j++) {
-        if (board.value[i][j] === board.value[i + 1][j - 1] && board.value[i][j] === board.value[i + 2][j - 2] && board.value[i][j] === board.value[i + 3][j - 3] && board.value[i][j] !== 0) {
-          return {
-            winner: [[i, j], [i + 1, j - 1], [i + 2, j - 2], [i + 3, j - 3]],
-            player: board.value[i][j],
-            type: 4
-          };
-        }
-      }
-    }
-
-    // check diagonal (other direction)
-    for (let i = 3; i < board.value.length; i++) {
-      for (let j = 0; j < board.value[i].length - 4; j++) {
-
-        if (board.value[i][j] === board.value[i - 1][j + 1] && board.value[i][j] === board.value[i - 2][j + 2] && board.value[i][j] === board.value[i - 3][j + 3] && board.value[i][j] !== 0) {
-          return {
-            winner: [[i, j], [i - 1, j + 1], [i - 2, j + 2], [i - 3, j + 3]],
-            player: board.value[i][j],
-            type: 5
-          };
-        }
-      }
-    }
-
-    // check diagonal (other direction)
-    for (let i = 3; i < board.value.length; i++) {
-      for (let j = 3; j < board.value[i].length; j++) {
-        if (board.value[i][j] === board.value[i - 1][j - 1] && board.value[i][j] === board.value[i - 2][j - 2] && board.value[i][j] === board.value[i - 3][j - 3] && board.value[i][j] !== 0) {
-          return {
-            winner: [[i, j], [i - 1, j - 1], [i - 2, j - 2], [i - 3, j - 3]],
-            player: board.value[i][j],
-            type: 6
-          };
-        }
-      }
-    }
-
-    return false;
+    return "";
   });
 
-  const gameIsOver = ref(false);
+  const changePlayerTurn = (): void => {
+    currentPlayer.value = currentPlayer.value === RED_PLAYER ? YELLOW_PLAYER : RED_PLAYER;
+    timerCount.value = TIME_TO_PLAY;
+  };
+
+  const remarkWinner = (winner: Winner): void => {
+    const newValue = winner.winner * 2;
+    winner.coins.forEach(row => {
+      board.value[row[0]][row[1]] = newValue;
+    });
+  };
+
+  const clearBoard = async (): Promise<void> => {
+    for (let i = 6; i >= 0; i--) {
+      for (let j = 0; j < 6; j++) {
+        board.value[i][j] = 0;
+      }
+
+      await new Promise(resolve => setTimeout(resolve, 150));
+    }
+  };
+
+  const checkWinner = (board: number[][]): Winner | null => {
+    // Check horizontal
+    for (let i = 0; i < board.length; i++) {
+      for (let j = 0; j < board[i].length - 3; j++) {
+        if (
+          areAllEqual(board[i][j], board[i][j + 1], board[i][j + 2], board[i][j + 3])
+        ) {
+          return {
+            coins: [[i, j], [i, j + 1], [i, j + 2], [i, j + 3]],
+            winner: board[i][j],
+            type: 'horizontal',
+          };
+        }
+      }
+    }
+
+    // Check vertical
+    for (let i = 0; i < board.length - 3; i++) {
+      for (let j = 0; j < board[i].length; j++) {
+        if (
+          areAllEqual(board[i][j], board[i + 1][j], board[i + 2][j], board[i + 3][j])
+        ) {
+          return {
+            coins: [[i, j], [i + 1, j], [i + 2, j], [i + 3, j]],
+            winner: board[i][j],
+            type: 'vertical',
+          };
+        }
+      }
+    }
+
+    // Check diagonal to the right
+    for (let i = 0; i < board.length - 3; i++) {
+      for (let j = 0; j < board[i].length - 3; j++) {
+        if (
+          areAllEqual(board[i][j], board[i + 1][j + 1], board[i + 2][j + 2], board[i + 3][j + 3])
+        ) {
+          return {
+            coins: [[i, j], [i + 1, j + 1], [i + 2, j + 2], [i + 3, j + 3]],
+            winner: board[i][j],
+            type: 'diagonal-right',
+          };
+        }
+      }
+    }
+
+    // Check diagonal to the left
+    for (let i = 0; i < board.length - 3; i++) {
+      for (let j = 3; j < board[i].length; j++) {
+        if (
+
+          areAllEqual(board[i][j], board[i + 1][j - 1], board[i + 2][j - 2], board[i + 3][j - 3])
+        ) {
+          return {
+            coins: [[i, j], [i + 1, j - 1], [i + 2, j - 2], [i + 3, j - 3]],
+            winner: board[i][j],
+            type: 'diagonal-left',
+          };
+        }
+      }
+    }
+
+    return null;
+  };
 
   const addCoin = (indexCol: number): void => {
     if (gameIsOver.value) return;
+
     const col = board.value[indexCol];
+
+    // check if the column is full
     const indexRow = col.findIndex((row) => row === 0);
     if (indexRow === -1) return;
+
+    // add coin
     col[indexRow] = currentPlayer.value;
 
-    if (winner.value !== false) {
-      const newValue = winner.value.player * 2;
+    const winner = checkWinner(board.value);
 
-      winner.value.winner.forEach((row) => {
-        board.value[row[1]][row[0]] = newValue;
-      });
-
-      // alert(`Player ${currentPlayer.value === 1 ? "red" : "yellow"} wins!`);
-      gameIsOver.value = true;
+    // check winner
+    if (winner !== null) {
       stopTimer();
+      gameIsOver.value = true;
 
-      // clearInterval(timer.value);
-
-      // setTimeout(() => {
-      //   board.value = board.value.map((col) => col.map(() => 0));
-      //   timer.value 
-      // }, 200)
+      // replace the winner coins with the double value to highlight them
+      remarkWinner(winner);
 
       return;
     }
 
-    currentPlayer.value = currentPlayer.value === 1 ? -1 : 1;
-    timerCount.value = TIME_TO_PLAY;
+    changePlayerTurn();
   };
 
-  const timerCount = ref(TIME_TO_PLAY);
-  const timer = ref(null as any);
-
-  const startTimer = () => {
+  const startTimer = (): void => {
     timer.value = setInterval(() => {
       timerCount.value--;
 
       if (timerCount.value === 0) {
-        currentPlayer.value = currentPlayer.value === 1 ? -1 : 1;
-        timerCount.value = TIME_TO_PLAY;
-        // clearInterval(timer.value);
+        changePlayerTurn();
       }
     }, 1000);
   };
 
-  const stopTimer = () => {
+  const stopTimer = (): void => {
     clearInterval(timer.value);
   };
 
-  const restrart = () => {
-    board.value = board.value.map((col) => col.map(() => 0));
+  const restart = async (): Promise<void> => {
+    await clearBoard();
     gameIsOver.value = false;
     timerCount.value = TIME_TO_PLAY;
+    currentPlayer.value = RED_PLAYER;
     stopTimer();
     startTimer();
   };
@@ -163,13 +180,17 @@ export function useGame() {
     startTimer();
   });
 
+  onUnmounted(() => {
+    stopTimer();
+  });
+
   return {
     currentPlayer,
     board,
-    winner,
-    addCoin,
-    restrart,
     timerCount,
     gameIsOver,
+    winnerName,
+    addCoin,
+    restart,
   }
 }

@@ -168,11 +168,11 @@ export function useGame() {
   };
 
   const restart = async (): Promise<void> => {
-    await clearBoard();
     gameIsOver.value = false;
+    stopTimer();
     timerCount.value = TIME_TO_PLAY;
     currentPlayer.value = RED_PLAYER;
-    stopTimer();
+    await clearBoard();
     startTimer();
   };
 

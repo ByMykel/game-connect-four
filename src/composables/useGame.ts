@@ -43,12 +43,14 @@ export function useGame() {
   };
 
   const clearBoard = async (): Promise<void> => {
-    for (let i = 6; i >= 0; i--) {
+    const order = [0, 1, 2, 3, 4, 5, 6].sort(() => Math.random() - 0.5);
+
+    for (let i of order) {
       for (let j = 0; j < 6; j++) {
         board.value[i][j] = 0;
       }
 
-      await new Promise(resolve => setTimeout(resolve, 150));
+      await new Promise(resolve => setTimeout(resolve, 80));
     }
   };
 

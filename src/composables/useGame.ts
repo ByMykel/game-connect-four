@@ -1,6 +1,7 @@
 import { computed, ref, onMounted, onUnmounted } from "vue";
 import { RED_PLAYER, YELLOW_PLAYER, TIME_TO_PLAY } from "../constants";
 import { Winner } from "../types";
+import { checkDraw } from "../utils/checkDraw";
 import { checkWinner } from "../utils/checkWinner";
 
 export function useGame() {
@@ -76,6 +77,15 @@ export function useGame() {
       return;
     }
 
+    const draw = checkDraw(board.value);
+
+    // check draw
+    if (draw) {
+      stopTimer();
+      gameIsOver.value = true;
+      return;
+    }
+
     changePlayerTurn();
   };
 
@@ -94,11 +104,11 @@ export function useGame() {
   };
 
   const restart = async (): Promise<void> => {
-    gameIsOver.value = false;
     stopTimer();
+    await clearBoard();
     timerCount.value = TIME_TO_PLAY;
     currentPlayer.value = RED_PLAYER;
-    await clearBoard();
+    gameIsOver.value = false;
     startTimer();
   };
 

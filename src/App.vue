@@ -83,8 +83,6 @@ const rowColorClasses = (col: number) => {
       :player="currentPlayer"
       :timerCount="timerCount"
       :gameIsOver="gameIsOver"
-      :winnerName="winnerName"
-      :restart="restart"
     />
   </div>
 </template>

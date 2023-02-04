@@ -51,11 +51,11 @@ const rowColorClasses = (col: number) => {
 
       <div class="flex items-center">
         <button
-          class="rounded-full bg-blue-700/70 hover:bg-blue-500/70 py-1 px-4 text-white text-sm"
+          class="rounded-full bg-blue-600 hover:bg-blue-500 py-1 px-4 font-semibold text-white text-sm"
           type="button"
           @click="restart()"
         >
-          PLAY AGAIN
+          RESTART
         </button>
       </div>
     </header>

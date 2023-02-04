@@ -4,6 +4,6 @@
 
 @layer base {
   body {
-    @apply font-sans antialiased bg-blue-400 bg-[url('/img/bank-note.svg')];
+    @apply font-sans antialiased bg-stone-50 bg-[url('/img/graph-paper.svg')];
   }
 }

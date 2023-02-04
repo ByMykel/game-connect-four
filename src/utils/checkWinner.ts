@@ -52,7 +52,6 @@ export const checkWinner = (board: number[][]): Winner | null => {
 	for (let i = 0; i < board.length - 3; i++) {
 		for (let j = 3; j < board[i].length; j++) {
 			if (
-
 				areAllEqual(board[i][j], board[i + 1][j - 1], board[i + 2][j - 2], board[i + 3][j - 3])
 			) {
 				return {

@@ -13,16 +13,26 @@ const props = defineProps<{
 </script>
 
 <template>
-  <div
-    class="h-20 w-[335px] sm:w-[632px] z-20 absolute bottom-[-4rem] sm:-bottom-14 flex justify-center"
-  >
+  <div class="w-[335px] sm:w-[632px] z-20 flex justify-center mt-7">
     <Transition name="footer">
-      <div v-if="!gameIsOver" class="relative flex justify-center">
-        <span class="absolute top-14 text-6xl text-white font-bold"
-          >{{ timerCount }}s</span
-        >
-        <TurnBackgroundRed v-if="player === RED_PLAYER" />
-        <TurnBackgroundYellow v-else />
+      <div
+        v-if="!gameIsOver"
+        class="w-full grid grid-cols-2 gap-2 items-center"
+      >
+        <div class="bg-gray-200 rounded-lg p-3">
+          <p class="font-semibold text-md">PLAYER</p>
+          <p>
+            <span
+              class="h-3 w-3 inline-flex rounded-full"
+              :class="[player === RED_PLAYER ? 'bg-red-500' : 'bg-yellow-500']"
+            ></span>
+            {{ player === RED_PLAYER ? "RED" : "YELLOW" }}
+          </p>
+        </div>
+        <div class="bg-gray-200 rounded-lg p-3">
+          <p class="font-semibold text-md">TIME</p>
+          <p>{{ timerCount }}s</p>
+        </div>
       </div>
     </Transition>
   </div>

@@ -43,11 +43,21 @@ export function useGame() {
   };
 
   const clearBoard = async (): Promise<void> => {
-    const order = [0, 1, 2, 3, 4, 5, 6].sort(() => Math.random() - 0.5);
+    let order: number[] = [];
 
-    for (let i of order) {
-      for (let j = 0; j < 6; j++) {
-        board.value[i][j] = 0;
+    // get all columns with coins
+    board.value.forEach((col, index) => {
+      if (col.some(row => row !== 0)) {
+        order.push(index);
+      }
+    });
+
+    // shuffle the columns
+    order = order.sort(() => Math.random() - 0.5);
+
+    for (const col of order) {
+      for (let row = 0; row < 6; row++) {
+        board.value[col][row] = 0;
       }
 
       await new Promise(resolve => setTimeout(resolve, 80));

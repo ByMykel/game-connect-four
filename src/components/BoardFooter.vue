@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import TurnBackgroundRed from "./svg/TurnBackgroundRed.vue";
-import TurnBackgroundYellow from "./svg/TurnBackgroundYellow.vue";
-
 import { RED_PLAYER } from "../constants";
 import { defineProps } from "vue";
 
@@ -13,13 +10,15 @@ const props = defineProps<{
 </script>
 
 <template>
-  <div class="w-[335px] sm:w-[632px] z-20 flex justify-center mt-7">
+  <div class="w-[335px] sm:w-[632px] z-20 flex justify-center mt-4">
     <Transition name="footer">
       <div
         v-if="!gameIsOver"
         class="w-full grid grid-cols-2 gap-2 items-center"
       >
-        <div class="bg-gray-200 rounded-lg p-3">
+        <div
+          class="bg-stone-100 rounded-xl p-3 shadow-sm border border-stone-200"
+        >
           <p class="font-semibold text-md">PLAYER</p>
           <p>
             <span
@@ -29,7 +28,9 @@ const props = defineProps<{
             {{ player === RED_PLAYER ? "RED" : "YELLOW" }}
           </p>
         </div>
-        <div class="bg-gray-200 rounded-lg p-3">
+        <div
+          class="bg-stone-100 rounded-xl p-3 shadow-sm border border-stone-200"
+        >
           <p class="font-semibold text-md">TIME</p>
           <p>{{ timerCount }}s</p>
         </div>

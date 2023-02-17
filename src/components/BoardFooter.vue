@@ -17,7 +17,7 @@ const props = defineProps<{
         class="w-full grid grid-cols-2 gap-2 items-center"
       >
         <div
-          class="bg-stone-100 rounded-xl p-3 shadow-sm border border-stone-200"
+          class="bg-stone-200/30 rounded-xl p-3 shadow-sm border-2 border-stone-400 sm:flex justify-between"
         >
           <p class="font-semibold text-md">PLAYER</p>
           <p>
@@ -29,7 +29,7 @@ const props = defineProps<{
           </p>
         </div>
         <div
-          class="bg-stone-100 rounded-xl p-3 shadow-sm border border-stone-200"
+          class="bg-stone-200/30 rounded-xl p-3 shadow-sm border-2 border-stone-400 sm:flex justify-between"
         >
           <p class="font-semibold text-md">TIME</p>
           <p>{{ timerCount }}s</p>

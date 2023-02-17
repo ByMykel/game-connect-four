@@ -22,19 +22,19 @@ const rowColorClasses = (col: number) => {
 
   const classes: { [key: string]: string } = {
     // red
-    "red-1": "sm:group-hover:[&:nth-child(1)]:bg-red-500 rounded-full",
-    "red-2": "sm:group-hover:[&:nth-child(2)]:bg-red-500 rounded-full",
-    "red-3": "sm:group-hover:[&:nth-child(3)]:bg-red-500 rounded-full",
-    "red-4": "sm:group-hover:[&:nth-child(4)]:bg-red-500 rounded-full",
-    "red-5": "sm:group-hover:[&:nth-child(5)]:bg-red-500 rounded-full",
-    "red-6": "sm:group-hover:[&:nth-child(6)]:bg-red-500 rounded-full",
+    "red-1": "sm:group-hover:[&:nth-child(1)]:bg-red-500 sm:group-focus:[&:nth-child(1)]:bg-red-500 rounded-full",
+    "red-2": "sm:group-hover:[&:nth-child(2)]:bg-red-500 sm:group-focus:[&:nth-child(2)]:bg-red-500 rounded-full",
+    "red-3": "sm:group-hover:[&:nth-child(3)]:bg-red-500 sm:group-focus:[&:nth-child(3)]:bg-red-500 rounded-full",
+    "red-4": "sm:group-hover:[&:nth-child(4)]:bg-red-500 sm:group-focus:[&:nth-child(4)]:bg-red-500 rounded-full",
+    "red-5": "sm:group-hover:[&:nth-child(5)]:bg-red-500 sm:group-focus:[&:nth-child(5)]:bg-red-500 rounded-full",
+    "red-6": "sm:group-hover:[&:nth-child(6)]:bg-red-500 sm:group-focus:[&:nth-child(6)]:bg-red-500 rounded-full",
     // yellow
-    "yellow-1": "sm:group-hover:[&:nth-child(1)]:bg-yellow-500 rounded-full",
-    "yellow-2": "sm:group-hover:[&:nth-child(2)]:bg-yellow-500 rounded-full",
-    "yellow-3": "sm:group-hover:[&:nth-child(3)]:bg-yellow-500 rounded-full",
-    "yellow-4": "sm:group-hover:[&:nth-child(4)]:bg-yellow-500 rounded-full",
-    "yellow-5": "sm:group-hover:[&:nth-child(5)]:bg-yellow-500 rounded-full",
-    "yellow-6": "sm:group-hover:[&:nth-child(6)]:bg-yellow-500 rounded-full",
+    "yellow-1": "sm:group-hover:[&:nth-child(1)]:bg-yellow-500 sm:group-focus:[&:nth-child(1)]:bg-yellow-500 rounded-full",
+    "yellow-2": "sm:group-hover:[&:nth-child(2)]:bg-yellow-500 sm:group-focus:[&:nth-child(2)]:bg-yellow-500 rounded-full",
+    "yellow-3": "sm:group-hover:[&:nth-child(3)]:bg-yellow-500 sm:group-focus:[&:nth-child(3)]:bg-yellow-500 rounded-full",
+    "yellow-4": "sm:group-hover:[&:nth-child(4)]:bg-yellow-500 sm:group-focus:[&:nth-child(4)]:bg-yellow-500 rounded-full",
+    "yellow-5": "sm:group-hover:[&:nth-child(5)]:bg-yellow-500 sm:group-focus:[&:nth-child(5)]:bg-yellow-500 rounded-full",
+    "yellow-6": "sm:group-hover:[&:nth-child(6)]:bg-yellow-500 sm:group-focus:[&:nth-child(6)]:bg-yellow-500 rounded-full",
   };
 
   const firstEmpty = board.value[col].findIndex((row) => row === 0) + 1;
@@ -51,9 +51,10 @@ const rowColorClasses = (col: number) => {
 
       <div class="flex items-center">
         <button
-          class="rounded-full bg-blue-600 hover:bg-blue-500 py-1 px-4 font-semibold text-white text-sm"
+          class="rounded-full bg-blue-600 hover:bg-blue-500 focus:bg-blue-500 py-1 px-4 font-semibold text-white text-sm"
           type="button"
           @click="restart()"
+          @keydown.enter="restart()"
         >
           RESTART
         </button>
@@ -68,6 +69,7 @@ const rowColorClasses = (col: number) => {
           v-for="(col, indexCol) in board"
           :key="`col-${indexCol}`"
           @click="addCoin(indexCol)"
+          @keydown.enter="addCoin(indexCol)"
         >
           <Coin
             v-for="(row, indexRow) in col"

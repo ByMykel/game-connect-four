@@ -1,8 +1,9 @@
-import { computed, ref, onMounted, onUnmounted } from "vue";
+import { computed, ref, watch, onMounted, onUnmounted } from "vue";
 import { RED_PLAYER, YELLOW_PLAYER, TIME_TO_PLAY } from "../constants";
 import { Winner } from "../types";
 import { checkDraw } from "../utils/checkDraw";
 import { checkWinner } from "../utils/checkWinner";
+import confetti from "canvas-confetti";
 
 export function useGame() {
   const currentPlayer = ref<number>(RED_PLAYER);
@@ -19,6 +20,8 @@ export function useGame() {
     [0, 0, 0, 0, 0, 0],
   ]);
 
+  const confettiCanvas = document.createElement("canvas");
+
   const winnerName = computed(() => {
     const winner = checkWinner(board.value);
 
@@ -31,13 +34,14 @@ export function useGame() {
   });
 
   const changePlayerTurn = (): void => {
-    currentPlayer.value = currentPlayer.value === RED_PLAYER ? YELLOW_PLAYER : RED_PLAYER;
+    currentPlayer.value =
+      currentPlayer.value === RED_PLAYER ? YELLOW_PLAYER : RED_PLAYER;
     timerCount.value = TIME_TO_PLAY;
   };
 
   const remarkWinner = (winner: Winner): void => {
     const newValue = winner.winner * 2;
-    winner.coins.forEach(row => {
+    winner.coins.forEach((row) => {
       board.value[row[0]][row[1]] = newValue;
     });
   };
@@ -47,7 +51,7 @@ export function useGame() {
 
     // get all columns with coins
     board.value.forEach((col, index) => {
-      if (col.some(row => row !== 0)) {
+      if (col.some((row) => row !== 0)) {
         order.push(index);
       }
     });
@@ -60,7 +64,7 @@ export function useGame() {
         board.value[col][row] = 0;
       }
 
-      await new Promise(resolve => setTimeout(resolve, 80));
+      await new Promise((resolve) => setTimeout(resolve, 80));
     }
   };
 
@@ -85,6 +89,16 @@ export function useGame() {
 
       // replace the winner coins with the double value to highlight them
       remarkWinner(winner);
+
+      // displaies confetties after a victory
+      setTimeout(() => {
+        displayConfetti();
+      }, 1000);
+
+      // removes canvas element after confetties animation
+      setTimeout(() => {
+        removeConfettiFromBody();
+      }, 2000);
 
       return;
     }
@@ -124,6 +138,35 @@ export function useGame() {
     startTimer();
   };
 
+  // creates the confetti canvas element inside body
+  const displayConfetti = (): void => {
+    confettiCanvas.style.width = "100%";
+    confettiCanvas.style.height = "100%";
+
+    confettiCanvas.style.position = "absolute";
+    confettiCanvas.style.top = "0";
+    confettiCanvas.style.right = "0";
+    confettiCanvas.style.bottom = "0";
+    confettiCanvas.style.left = "0";
+
+    document.body.appendChild(confettiCanvas);
+
+    confetti.create(confettiCanvas, {
+      resize: true,
+      useWorker: true,
+    });
+
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.8 },
+    });
+  };
+
+  const removeConfettiFromBody = () => {
+    document.body.removeChild(confettiCanvas);
+  };
+
   onMounted(() => {
     startTimer();
   });
@@ -140,5 +183,5 @@ export function useGame() {
     winnerName,
     addCoin,
     restart,
-  }
+  };
 }

@@ -1,4 +1,4 @@
-import { computed, ref, watch, onMounted, onUnmounted } from "vue";
+import { computed, ref, onMounted, onUnmounted } from "vue";
 import { RED_PLAYER, YELLOW_PLAYER, TIME_TO_PLAY } from "../constants";
 import { Winner } from "../types";
 import { checkDraw } from "../utils/checkDraw";

@@ -90,15 +90,13 @@ export function useGame() {
       // replace the winner coins with the double value to highlight them
       remarkWinner(winner);
 
-      // displaies confetties after a victory
       setTimeout(() => {
-        displayConfetti();
-      }, 1000);
-
-      // removes canvas element after confetties animation
-      setTimeout(() => {
-        removeConfettiFromBody();
-      }, 2000);
+        confetti({
+          particleCount: 100,
+          spread: 200,
+          origin: { y: 0.5 },
+        });
+      }, 800);
 
       return;
     }
@@ -139,29 +137,7 @@ export function useGame() {
   };
 
   // creates the confetti canvas element inside body
-  const displayConfetti = (): void => {
-    confettiCanvas.style.width = "100%";
-    confettiCanvas.style.height = "100%";
-
-    confettiCanvas.style.position = "absolute";
-    confettiCanvas.style.top = "0";
-    confettiCanvas.style.right = "0";
-    confettiCanvas.style.bottom = "0";
-    confettiCanvas.style.left = "0";
-
-    document.body.appendChild(confettiCanvas);
-
-    confetti.create(confettiCanvas, {
-      resize: true,
-      useWorker: true,
-    });
-
-    confetti({
-      particleCount: 100,
-      spread: 70,
-      origin: { y: 0.8 },
-    });
-  };
+  const displayConfetti = (): void => {};
 
   const removeConfettiFromBody = () => {
     document.body.removeChild(confettiCanvas);

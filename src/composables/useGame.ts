@@ -78,6 +78,9 @@ export function useGame() {
     // add coin
     col[indexRow] = currentPlayer.value;
 
+    // lose focus
+    (document.activeElement as HTMLElement).blur();
+
     const winner = checkWinner(board.value);
 
     // check winner

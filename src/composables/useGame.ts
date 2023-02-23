@@ -20,8 +20,6 @@ export function useGame() {
     [0, 0, 0, 0, 0, 0],
   ]);
 
-  const confettiCanvas = document.createElement("canvas");
-
   const winnerName = computed(() => {
     const winner = checkWinner(board.value);
 
@@ -90,13 +88,11 @@ export function useGame() {
       // replace the winner coins with the double value to highlight them
       remarkWinner(winner);
 
-      setTimeout(() => {
-        confetti({
-          particleCount: 100,
-          spread: 200,
-          origin: { y: 0.5 },
-        });
-      }, 800);
+      confetti({
+        particleCount: 100,
+        spread: 200,
+        origin: { y: 0.5 },
+      });
 
       return;
     }
@@ -134,13 +130,6 @@ export function useGame() {
     currentPlayer.value = RED_PLAYER;
     gameIsOver.value = false;
     startTimer();
-  };
-
-  // creates the confetti canvas element inside body
-  const displayConfetti = (): void => {};
-
-  const removeConfettiFromBody = () => {
-    document.body.removeChild(confettiCanvas);
   };
 
   onMounted(() => {

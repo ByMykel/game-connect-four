@@ -3,6 +3,7 @@ import { RED_PLAYER, YELLOW_PLAYER, TIME_TO_PLAY } from "../constants";
 import { Winner } from "../types";
 import { checkDraw } from "../utils/checkDraw";
 import { checkWinner } from "../utils/checkWinner";
+import confetti from "canvas-confetti";
 
 export function useGame() {
   const currentPlayer = ref<number>(RED_PLAYER);
@@ -31,13 +32,14 @@ export function useGame() {
   });
 
   const changePlayerTurn = (): void => {
-    currentPlayer.value = currentPlayer.value === RED_PLAYER ? YELLOW_PLAYER : RED_PLAYER;
+    currentPlayer.value =
+      currentPlayer.value === RED_PLAYER ? YELLOW_PLAYER : RED_PLAYER;
     timerCount.value = TIME_TO_PLAY;
   };
 
   const remarkWinner = (winner: Winner): void => {
     const newValue = winner.winner * 2;
-    winner.coins.forEach(row => {
+    winner.coins.forEach((row) => {
       board.value[row[0]][row[1]] = newValue;
     });
   };
@@ -47,7 +49,7 @@ export function useGame() {
 
     // get all columns with coins
     board.value.forEach((col, index) => {
-      if (col.some(row => row !== 0)) {
+      if (col.some((row) => row !== 0)) {
         order.push(index);
       }
     });
@@ -60,7 +62,7 @@ export function useGame() {
         board.value[col][row] = 0;
       }
 
-      await new Promise(resolve => setTimeout(resolve, 80));
+      await new Promise((resolve) => setTimeout(resolve, 80));
     }
   };
 
@@ -85,6 +87,12 @@ export function useGame() {
 
       // replace the winner coins with the double value to highlight them
       remarkWinner(winner);
+
+      confetti({
+        particleCount: 100,
+        spread: 200,
+        origin: { y: 0.5 },
+      });
 
       return;
     }
@@ -140,5 +148,5 @@ export function useGame() {
     winnerName,
     addCoin,
     restart,
-  }
+  };
 }
